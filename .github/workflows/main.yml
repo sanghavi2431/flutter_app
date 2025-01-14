@@ -39,9 +39,7 @@ jobs:
           name: flutter-test-results
           path: flutter-test-results/results.txt
 
-      # Step 6: Generate and Upload Coverage Report
-      - name: Generate coverage report
-        run: flutter test --coverage
+       # Step 7: Upload coverage report
       - name: Upload coverage report
         if: success()
         uses: actions/upload-artifact@v3
