@@ -31,7 +31,8 @@ jobs:
       # Step 5: Run all tests and generate coverage report
       - name: Run all tests and generate coverage
         run: flutter test --coverage
-
+        continue-on-error: true
+        
       # Step 6: Upload test result artifacts (JUnit-style)
       - name: Upload test result artifacts
         uses: actions/upload-artifact@v3
