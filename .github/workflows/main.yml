@@ -23,3 +23,40 @@ jobs:
       # Step 3: Install dependencies
       - name: Install dependencies
         run: flutter pub get
+
+      # Step 4: Analyze code
+      - name: Analyze code
+        run: flutter analyze
+
+      # Step 5: Run test cases
+      - name: Run tests
+        run: |
+          flutter test --machine > tests.json
+          flutter test --coverage
+        continue-on-error: true # Continue even if some tests fail
+
+      # Step 6: Upload test result artifacts
+      - name: Upload test result artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: tests.json
+
+      # Step 7: Upload coverage report
+      - name: Upload coverage report
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
+      # Step 8: Build for Web
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      # Step 9: Upload Web Build
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-web-build
+          path: build/web
