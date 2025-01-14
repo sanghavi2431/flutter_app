@@ -14,14 +14,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-    # Step 2: Set up Flutter
+      # Step 2: Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable # Ensure "stable" refers to the Flutter channel, not a specific version
-          channel: stable         # Explicitly specify the Flutter release channel
-          architecture: x64       # Default architecture
-
+          flutter-version: '3.10.5' # Replace with the required Flutter version
+          channel: stable           # Specify the stable channel
 
       # Step 3: Install dependencies
       - name: Install dependencies
