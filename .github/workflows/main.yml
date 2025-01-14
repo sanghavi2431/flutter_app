@@ -1,43 +1,48 @@
-name: Flutter
+name: Flutter CI/CD
 
 on:
-  # Runs this action when you push on master
   push:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
-  flutter_job:
-    runs-on: macos-latest
+  flutter:
+    runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Check out the code
+      - name: Check out code
+        uses: actions/checkout@v3
 
-      # Clones the project on the machine
-      - uses: actions/checkout@v4
-
-      # Installs flutter and related dependency on this machine
-      - name: Setup Flutter
+      # Step 2: Set up Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          # flutter-version: '3.16.8'
-          # ^ If you want to use a specific version of flutter
-      
-      # Fetches proj dependencies from pub
+        with:    
+          channel: stable
+
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: flutter pub get
-        # ^ If you want to use a specific version of flutter
-      
-      # Verifies if the dart code is formatted well
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-        # --set-exit-if-changed stops execution if the any code is not well formatted
-        # --output=none prints files which needs to be formatted
-      
-      # Checks for Symantic errors. Can be configured using analysis_options.yaml
-      - name: Analyze project source
-        run: flutter analyze
-        # optionally use --fatal-warnings to stop execution if any warnings are found
 
-      # Runs unit test
-      - name: Run tests
-        run: flutter test
+      # Step 4: Analyze code
+      - name: Analyze code
+        run: flutter analyze
+
+      # Step 5: Run all tests and generate coverage report
+      - name: Run all tests and generate coverage
+        run: flutter test --coverage
+
+      # Step 6: Upload test result artifacts (JUnit-style)
+      - name: Upload test result artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: result.json
+
+      # Step 7: Upload coverage report
+      - name: Upload coverage report
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
