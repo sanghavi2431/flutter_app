@@ -23,8 +23,10 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: flutter pub get
-
+        run: |
+          flutter pub get
+          flutter pub upgrade --major-versions # Force upgrade to compatible versions
+          
       # Step 4: Analyze code
       - name: Analyze code
         run: flutter analyze
@@ -36,7 +38,7 @@ jobs:
           flutter test --coverage
         continue-on-error: true # Continue even if some tests fail
 
-      # Step 6: Upload test results
+      # Step 6: Upload test result artifacts
       - name: Upload test result artifacts
         uses: actions/upload-artifact@v3
         with:
