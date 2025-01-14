@@ -14,19 +14,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Flutter
+      # Step 2: Set up Flutter (use a stable version that works)
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.14.0' # Ensure this version or higher is used
+          flutter-version: '3.13.6'  # Use a stable version known to work
           channel: stable
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: |
-          flutter pub get
-          flutter pub upgrade --major-versions # Force upgrade to compatible versions
-          
+        run: flutter pub get
+
       # Step 4: Analyze code
       - name: Analyze code
         run: flutter analyze
