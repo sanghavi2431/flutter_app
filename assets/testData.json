@@ -1,0 +1,17 @@
+{
+    "mockToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUyLCJyb2xlX2lkIjoxLCJpYXQiOjE3MzU5MTUyOTEsImV4cCI6MTczNjUyMDA5MX0.GWrrMseWa1lsvr5FUjudP8jWiiEVCt-U7_jlPrde2tw",
+    "taskIdFfake": "24764",
+    "mockSupervisorToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUxLCJyb2xlX2lkIjoyLCJpYXQiOjE3MzYxNzg4NjksImV4cCI6MTczNjc4MzY2OX0.A9D7jTgG4-f2zkUbwouhjliYfPb2V3Nj2BWXsMKJcs8",
+    "facilityId": 65,
+    "janitorId": 52,
+    "id": 15,
+    "taskid": 267,
+    "taskId": "2629147",
+     "type" : "selfie",
+    "profileImageType": "profile",
+    "testremarks" : "Test remark",
+    "allocationId": "2527523"
+  }
+
+  
+  
