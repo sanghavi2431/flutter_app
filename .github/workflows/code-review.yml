@@ -22,7 +22,7 @@ jobs:
         run: flutter pub get
 
       - name: Run Flutter Analyze
-        run: flutter analyze
+        run: flutter analyze | tee flutter_analyze_report.txt
         continue-on-error: true
 
       - name: Install Dart Code Metrics
@@ -36,6 +36,12 @@ jobs:
           metrics lib | tee metrics_report.txt
         continue-on-error: true
 
+      - name: Upload Flutter Analyze Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-analyze
+          path: flutter_analyze_report.txt
+   
       - name: Upload Dart Metrics Report
         uses: actions/upload-artifact@v4
         with:
