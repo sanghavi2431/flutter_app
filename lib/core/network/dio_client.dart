@@ -1,0 +1,199 @@
+import 'package:dio/dio.dart';
+
+class DioClient {
+  /// dio instance
+  final Dio _dio;
+
+  /// injecting dio instance
+  DioClient(this._dio);
+
+  /// Get:-----------------------------------------------------------------------
+  Future<dynamic> get(
+    String uri, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.get(
+        uri,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        print("error in get methode ${e.response}");
+        if (e.response == null) {
+          rethrow;
+        }
+
+        if (e.response != null) {
+          throw e.response?.data;
+        }
+      }
+      rethrow;
+    }
+  }
+
+  /// Post:----------------------------------------------------------------------
+  Future<dynamic> post(
+    String uri, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.post(
+        uri,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+
+      return response.data;
+    } catch (e) {
+      //  print("error in post methode ${e.toString()}");
+
+      if (e is DioException) {
+        //  print("error in post type ${e.error}");
+        // print("error in post type ${e.message}");
+        // print("error in post methode ${e.response!.statusMessage}");
+        print("error in post methode ${e.response!.data}");
+        //  print("erro response ${e.response!}");
+
+        // print("error in post methode ${e.response == null }");
+        //  print("error in post methode ${e.response!.data['error']}");
+        //  print("error in post methode responr  ${e.response!}");
+        if (e.response == null) {
+          rethrow;
+        }
+
+        if (e.response != null) {
+          throw e.response!.data;
+        }
+      }
+      rethrow;
+    }
+  }
+
+  /// Put:-----------------------------------------------------------------------
+  Future<dynamic> put(
+    String uri, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.put(
+        uri,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response == null) {
+          rethrow;
+        }
+
+        if (e.response != null) {
+          throw e.response?.data;
+        }
+      }
+      rethrow;
+    }
+  }
+
+  /// Delete:--------------------------------------------------------------------
+  Future<dynamic> delete(
+    String uri, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.delete(
+        uri,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response == null) {
+          rethrow;
+        }
+
+        if (e.response != null) {
+          throw e.response?.data;
+        }
+      }
+      rethrow;
+    }
+  }
+
+
+   Future<dynamic> patch(
+    String uri, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      final Response response = await _dio.patch(
+        uri,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response == null) {
+          rethrow;
+        }
+
+        if (e.response != null) {
+          throw e.response?.data;
+        }
+      }
+      rethrow;
+    }
+  }
+
+
+
+
+
+}
+
+
+
