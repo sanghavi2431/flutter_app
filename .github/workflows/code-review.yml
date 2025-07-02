@@ -40,9 +40,6 @@ jobs:
           name: dart-metrics
           path: metrics_report.txt
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
       - name: Run Snyk Security Scan
         run: snyk test --file=pubspec.yaml
         env:
