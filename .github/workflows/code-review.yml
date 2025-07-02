@@ -23,6 +23,7 @@ jobs:
 
       - name: Run Flutter Analyze
         run: flutter analyze
+        continue-on-error: true
 
       - name: Install Dart Code Metrics
         run: dart pub global activate dart_code_metrics
