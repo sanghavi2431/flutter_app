@@ -1,0 +1,48 @@
+name: Flutter Code Review
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  flutter-analyze:
+    name: Flutter Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0' # or 3.32.5 if needed
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run Flutter Analyze
+        run: flutter analyze
+
+      - name: Install Dart Code Metrics
+        run: dart pub global activate dart_code_metrics
+
+      - name: Run Dart Code Metrics
+        run: |
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          dart run dart_code_metrics:metrics lib > metrics_report.txt
+
+      - name: Upload Dart Metrics Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dart-metrics
+          path: metrics_report.txt
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Run Snyk Security Scan
+        run: snyk test --file=pubspec.yaml
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
