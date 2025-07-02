@@ -28,10 +28,11 @@ jobs:
       - name: Install Dart Code Metrics
         run: dart pub global activate dart_code_metrics
 
+      - name: Add Dart Code Metrics to PATH
+        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
       - name: Run Dart Code Metrics
-        run: |
-          export PATH="$PATH":"$HOME/.pub-cache/bin"
-          dart run dart_code_metrics:metrics lib > metrics_report.txt
+        run: metrics lib > metrics_report.txt
 
       - name: Upload Dart Metrics Report
         uses: actions/upload-artifact@v4
