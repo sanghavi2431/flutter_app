@@ -32,7 +32,8 @@ jobs:
         run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
       - name: Run Dart Code Metrics
-        run: metrics lib > metrics_report.txt
+        run: |
+          metrics lib | tee metrics_report.txt
 
       - name: Upload Dart Metrics Report
         uses: actions/upload-artifact@v4
