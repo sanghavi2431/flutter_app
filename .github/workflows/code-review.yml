@@ -47,3 +47,24 @@ jobs:
         with:
           name: dart-metrics
           path: metrics_report.txt
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Install Snyk Dart Plugin
+        run: snyk plugins install snyk-dart
+
+      - name: Run Snyk Dart Vulnerability Scan
+        run: snyk test --file=pubspec.yaml --all-projects | tee snyk_dart_report.txt
+        continue-on-error: true
+
+      - name: Upload Snyk Dart Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-dart-report
+          path: snyk_dart_report.txt
