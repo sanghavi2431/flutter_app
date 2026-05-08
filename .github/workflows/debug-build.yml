@@ -1,4 +1,4 @@
-name: Flutter Android Debug APK
+name: Flutter Android Release APK
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-2025
 
     steps:
       # Checkout code
@@ -34,18 +34,19 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # Build Debug APK
-      - name: Build Debug APK
-        run: flutter build apk --debug
+      # Build Release APK
+      - name: Build Release APK
+        run: flutter build apk --release
 
       # Copy APK to root
       - name: Copy APK
         run: |
-          find build/app/outputs/flutter-apk -name "*.apk" -exec cp {} flutter-debug.apk \;
+          $apk = Get-ChildItem -Recurse -Filter *.apk | Select-Object -First 1
+          Copy-Item $apk.FullName -Destination flutter-release.apk
 
       # Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v5
         with:
-          name: flutter-debug-apk
-          path: flutter-debug.apk
+          name: flutter-release-apk
+          path: flutter-release.apk
