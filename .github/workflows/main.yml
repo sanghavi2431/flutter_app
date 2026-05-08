@@ -1,0 +1,63 @@
+name: Flutter Android Release AAB
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v5
+
+      # Setup Java 17
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.5'
+
+      # Check Flutter version
+      - name: Flutter Version
+        run: flutter --version
+
+      # Create key.properties from GitHub Secret
+      - name: Create key.properties
+        run: |
+          echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
+
+      # Decode release keystore
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > keystore.b64
+          certutil -decode keystore.b64 android/app/upload-keystore.jks
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Build Release AAB
+      - name: Build Release AAB
+        run: flutter build appbundle --release
+
+      # Copy AAB to root
+      - name: Copy AAB
+        run: |
+          $aab = Get-ChildItem -Recurse -Filter *.aab | Select-Object -First 1
+          Copy-Item $aab.FullName -Destination flutter-release.aab
+
+      # Upload AAB artifact
+      - name: Upload AAB
+        uses: actions/upload-artifact@v5
+        with:
+          name: flutter-release-aab
+          path: flutter-release.aab
