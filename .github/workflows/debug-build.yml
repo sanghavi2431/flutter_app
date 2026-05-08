@@ -30,6 +30,17 @@ jobs:
       - name: Flutter Version
         run: flutter --version
 
+      # Create key.properties from GitHub Secret
+      - name: Create key.properties
+        run: |
+          echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
+
+      # Decode release keystore
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > keystore.b64
+          certutil -decode keystore.b64 android/upload-keystore.jks
+
       # Install dependencies
       - name: Install Dependencies
         run: flutter pub get
@@ -44,7 +55,7 @@ jobs:
           $apk = Get-ChildItem -Recurse -Filter *.apk | Select-Object -First 1
           Copy-Item $apk.FullName -Destination flutter-release.apk
 
-      # Upload APK
+      # Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v5
         with:
