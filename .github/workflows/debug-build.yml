@@ -39,7 +39,7 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > keystore.b64
-          certutil -decode keystore.b64 android/upload-keystore.jks
+           certutil -decode keystore.b64 android/app/upload-keystore.jks
 
       # Install dependencies
       - name: Install Dependencies
