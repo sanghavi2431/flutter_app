@@ -1,4 +1,4 @@
-name: Flutter Android Release APK
+name: Flutter iOS Simulator Build
 
 on:
   push:
@@ -7,18 +7,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: macos-latest
 
     steps:
       # Checkout code
       - uses: actions/checkout@v5
-
-      # Setup Java 17
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
 
       # Setup Flutter
       - name: Setup Flutter
@@ -30,34 +23,41 @@ jobs:
       - name: Flutter Version
         run: flutter --version
 
-      # Create key.properties from GitHub Secret
-      - name: Create key.properties
-        run: |
-          echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
-
-      # Decode release keystore
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" > keystore.b64
-           certutil -decode keystore.b64 android/app/upload-keystore.jks
-
-      # Install dependencies
-      - name: Install Dependencies
+      # Install Flutter dependencies
+      - name: Install Flutter Dependencies
         run: flutter pub get
 
-      # Build Release APK
-      - name: Build Release APK
-        run: flutter build apk --release
+      # Select latest Xcode
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
 
-      # Copy APK to root
-      - name: Copy APK
+      # Verify Xcode version
+      - name: Check Xcode Version
+        run: xcodebuild -version
+
+      # Install CocoaPods
+      - name: Install Pods
         run: |
-          $apk = Get-ChildItem -Recurse -Filter *.apk | Select-Object -First 1
-          Copy-Item $apk.FullName -Destination flutter-release.apk
+          cd ios
+          pod install --repo-update
 
-      # Upload APK artifact
-      - name: Upload APK
+      # Build Flutter iOS app for Simulator
+      - name: Build iOS Simulator App
+        run: |
+          cd ios
+          xcodebuild \
+          -workspace Runner.xcworkspace \
+          -scheme Runner \
+          -configuration Debug \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+          CODE_SIGNING_ALLOWED=NO \
+          build
+
+      # Upload logs if build fails
+      - name: Upload Logs
+        if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: flutter-release-apk
-          path: flutter-release.apk
+          name: ios-build-logs
+          path: ~/Library/Logs/DiagnosticReports
