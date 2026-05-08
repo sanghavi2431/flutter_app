@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2025
+    runs-on: ubuntu-latest
 
     steps:
       # Checkout code
@@ -41,8 +41,7 @@ jobs:
       # Copy APK to root
       - name: Copy APK
         run: |
-          $apk = Get-ChildItem -Recurse -Filter *.apk | Select-Object -First 1
-          Copy-Item $apk.FullName -Destination flutter-debug.apk
+          find build/app/outputs/flutter-apk -name "*.apk" -exec cp {} flutter-debug.apk \;
 
       # Upload APK
       - name: Upload APK
