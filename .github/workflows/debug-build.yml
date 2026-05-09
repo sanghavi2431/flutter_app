@@ -69,10 +69,6 @@ jobs:
           echo $MOBILEPROVISION_BASE64 | base64 --decode > \
           ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
 
-      # Build Flutter iOS release
-      - name: Build iOS Release
-        run: flutter build ios --release
-
       # Archive app
       - name: Archive App
         run: |
