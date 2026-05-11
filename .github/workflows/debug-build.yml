@@ -78,6 +78,7 @@ jobs:
           -scheme Runner \
           -configuration Release \
           -archivePath build/Runner.xcarchive \
+          -allowProvisioningUpdates \
           archive
 
       # Export IPA
