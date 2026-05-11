@@ -27,7 +27,7 @@ jobs:
       - name: Install Flutter Dependencies
         run: flutter pub get
 
-      # Select Xcode 26.3
+      # Select Xcode version
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
@@ -39,6 +39,8 @@ jobs:
       - name: Install Pods
         run: |
           cd ios
+          rm -rf Pods
+          rm -rf Podfile.lock
           pod install --repo-update
 
       # Create temporary keychain
@@ -48,7 +50,7 @@ jobs:
           security default-keychain -s build.keychain
           security unlock-keychain -p temp123 build.keychain
 
-      # Import .p12 certificate from GitHub Secrets
+      # Import .p12 certificate
       - name: Import Certificate
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.IOS_P12_BASE64 }}
@@ -69,8 +71,11 @@ jobs:
           echo $MOBILEPROVISION_BASE64 | base64 --decode > \
           ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
 
-      # Archive app
+      # Archive app with automatic provisioning updates
       - name: Archive App
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
         run: |
           cd ios
           xcodebuild \
