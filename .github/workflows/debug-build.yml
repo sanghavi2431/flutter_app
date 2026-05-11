@@ -84,7 +84,6 @@ jobs:
           -configuration Release \
           -archivePath build/Runner.xcarchive \
           -allowProvisioningUpdates \
-          -allowProvisioningDeviceRegistration \
           archive
 
       # Export IPA
