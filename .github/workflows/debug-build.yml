@@ -71,6 +71,16 @@ jobs:
           echo $MOBILEPROVISION_BASE64 | base64 --decode > \
           ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
 
+      # Setup App Store Connect API Key
+      - name: Setup App Store Connect API Key
+        env:
+          APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+        run: |
+          mkdir -p ~/private_keys
+
+          echo $APPSTORE_API_KEY_BASE64 | base64 --decode > \
+          ~/private_keys/AuthKey.p8
+
       # Archive app with automatic provisioning updates
       - name: Archive App
         env:
