@@ -73,9 +73,6 @@ jobs:
 
       # Archive app with automatic provisioning updates
       - name: Archive App
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
         run: |
           cd ios
           xcodebuild \
