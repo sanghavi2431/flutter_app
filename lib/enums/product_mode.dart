@@ -1,0 +1,4 @@
+enum ProductMode {
+  productDetails,
+  serviceDetails,
+}
