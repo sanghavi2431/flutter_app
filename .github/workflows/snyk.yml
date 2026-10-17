@@ -88,11 +88,15 @@ jobs:
         run: npm install --global snyk
 
       # 6. Snyk source-code scanning (Android + iOS native code)
-      - name: Run Snyk Code
+      - name: Run Snyk Code (Android + iOS)
         run: |
-          snyk code test . \
-            --severity-threshold=low \
-            2>&1 | tee snyk-code-report.txt || true
+          {
+            echo "=== android/ ==="
+            snyk code test android --severity-threshold=low || true
+            echo
+            echo "=== ios/ ==="
+            snyk code test ios --severity-threshold=low || true
+          } 2>&1 | tee snyk-code-report.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
