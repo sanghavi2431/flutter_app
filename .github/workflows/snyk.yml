@@ -1,17 +1,120 @@
-name: Flutter Code Review
+name: Flutter Security Scan
 
 on:
   push:
     branches: [flutter-project-upload]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  flutter-analyze:
-    name: Flutter Static Analysis
+  security-scan:
+    name: Flutter Security Scan
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Secret scanning
+      - name: Install Gitleaks
+        run: |
+          VERSION="8.18.4"
+          curl -fsSL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          sudo install gitleaks /usr/local/bin/gitleaks
+
+      - name: Run Gitleaks
+        run: |
+          gitleaks detect \
+            --source . \
+            --redact \
+            --report-format json \
+            --report-path gitleaks-report.json \
+            -v || true
+        continue-on-error: true
+
+      # 3. Dart dependency scanning
+      - name: Install OSV-Scanner
+        run: |
+          VERSION="v1.9.2"
+          curl -fsSL \
+            "https://github.com/google/osv-scanner/releases/download/${VERSION}/osv-scanner_linux_amd64" \
+            -o osv-scanner
+          chmod +x osv-scanner
+          sudo install osv-scanner /usr/local/bin/osv-scanner
+
+      - name: Run OSV-Scanner
+        run: |
+          osv-scanner --lockfile=pubspec.lock 2>&1 \
+            | tee osv-report.txt || true
+        continue-on-error: true
+
+      # 4. Source-code scanning (whole repo)
+      - name: Install Semgrep
+        run: pipx install semgrep
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config p/default \
+            --metrics=off \
+            --output semgrep-full.txt \
+            --json-output=semgrep-tmp.json \
+            . || true
+          {
+            echo "=== SUMMARY ==="
+            jq -r '[.results[].extra.severity] | group_by(.) | map("\(.[0]): \(length)") | .[]' semgrep-tmp.json
+            echo "Total: $(jq '.results | length' semgrep-tmp.json)"
+            echo
+            echo "=== FINDINGS ==="
+            cat semgrep-full.txt
+          } > semgrep-report.txt || true
+        continue-on-error: true
+
+      # 5. Snyk setup
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Snyk CLI
+        run: npm install --global snyk
+
+      # 6. Snyk source-code scanning (Android + iOS native code)
+      - name: Run Snyk Code
+        run: |
+          snyk code test . \
+            --severity-threshold=low \
+            2>&1 | tee snyk-code-report.txt || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      # 7. iOS CocoaPods dependency scanning
+      - name: Run Snyk Dependency Scan (iOS)
+        run: |
+          snyk test \
+            --file=ios/Podfile.lock \
+            --severity-threshold=low \
+            2>&1 | tee snyk-ios-dependency-report.txt || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      # 8. Android dependency scan (time-limited)
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo apt-get clean
+          df -h /
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -21,55 +124,41 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Run Flutter Analyze
-        run: flutter analyze | tee flutter_analyze_report.txt
-        continue-on-error: true
-
-      - name: Install Dart Code Metrics
-        run: dart pub global activate dart_code_metrics
-
-      - name: Add Dart Code Metrics to PATH
-        run: echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
-
-      - name: Run Dart Code Metrics
-        run: |
-          metrics lib | tee metrics_report.txt
-        continue-on-error: true
-
-      - name: Upload Flutter Analyze Report
-        uses: actions/upload-artifact@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          name: flutter-analyze
-          path: flutter_analyze_report.txt
-   
-      - name: Upload Dart Metrics Report
-        uses: actions/upload-artifact@v4
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          name: dart-metrics
-          path: metrics_report.txt
+          gradle-version: 8.13
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Run Snyk Scan and Save Report
+      - name: Run Snyk Dependency Scan (Android)
+        timeout-minutes: 15
+        working-directory: android
         run: |
-          snyk test --all-projects --severity-threshold=low | tee snyk-report.txt
+          snyk test --gradle-sub-project=app \
+            --configuration-matching='^releaseRuntimeClasspath$' \
+            --severity-threshold=low \
+            2>&1 | tee ../snyk-android-dependency-report.txt || true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      - name: Upload Snyk Report
+      # 9. Upload all security reports (one artifact)
+      - name: Upload Security Reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: snyk-report
-          path: snyk-report.txt
-
-      - name: Check Outdated Dependencies
-        run: dart pub outdated | tee dart_outdated.txt
-        continue-on-error: true
-
-      - name: Upload Dart Outdated Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dart-outdated
-          path: dart_outdated.txt
+          name: flutter-security-reports
+          path: |
+            gitleaks-report.json
+            osv-report.txt
+            semgrep-report.txt
+            snyk-code-report.txt
+            snyk-ios-dependency-report.txt
+            snyk-android-dependency-report.txt
+          if-no-files-found: warn
+          retention-days: 5
