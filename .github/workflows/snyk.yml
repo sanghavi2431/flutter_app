@@ -2,7 +2,7 @@ name: Flutter Code Review
 
 on:
   push:
-    branches: [april]
+    branches: [flutter-project-upload]
 
 jobs:
   flutter-analyze:
