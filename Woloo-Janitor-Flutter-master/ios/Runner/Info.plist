@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Woloo Smart Hygiene</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Woloo Smart Hygiene</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>woloo</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Woloo Smart Hygiene uses the camera to take janitor selfie photos for attendance verification and to capture photos when reporting facility hygiene issues.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Woloo Smart Hygiene uses your location to verify attendance check-in and check-out at assigned facility locations and to confirm you are on site when completing hygiene tasks, including when the app is in the background during an active shift.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Woloo Smart Hygiene uses your location to verify attendance check-in and check-out at assigned facility locations and to confirm you are on site when completing hygiene tasks.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Woloo Smart Hygiene uses your location while you use the app to verify attendance check-in and check-out at assigned facility locations and to confirm you are on site when completing hygiene tasks.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Woloo Smart Hygiene uses the microphone when you record video evidence of facility conditions or hygiene issues for submission with a task or issue report.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Woloo Smart Hygiene accesses your photo library so you can attach existing photos when reporting facility hygiene issues.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Our app utilizes app tracking in order to deliver personalized content and enhance your overall user experience. Your data privacy is of utmost importance to us, and this information is handled in accordance with our privacy policy.</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UISceneConfigurations</key>
+		<dict/>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIStatusBarStyle</key>
+	<string></string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+</dict>
+</plist>
